@@ -1,0 +1,1 @@
+<?php redirect(site_url('setting/edit/1')); ?>
