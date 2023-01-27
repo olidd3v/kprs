@@ -29,6 +29,10 @@
         <input type="password" name="password" class="form-control" placeholder="Password">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
+      <div class="form-group has-feedback">
+        <input type="perusahaan" name="perusahaan" class="form-control" placeholder="Perusahaan">
+        <span class="glyphicon glyphicon-option-horizontal form-control-feedback"></span>
+      </div>
       <div class="row">
         <div class="col-xs-8">
           <div class="checkbox icheck">

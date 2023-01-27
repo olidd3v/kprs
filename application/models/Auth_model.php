@@ -21,13 +21,14 @@ class Auth_model extends CI_Model {
 		return $query->result();
 	}
 	
-	public function set_session($id,$username,$role){
+	public function set_session($id,$username,$perusahaan,$role){
 		$this->db->select('role');
     $this->db->from('admin');
     $this->db->where('id',$id);
 		$newdata = array(
 			'id'		=> $id,
 			'username'  => $username,
+			'perusahaan'  => $perusahaan,
 			'role'  => $this->db->get()->row()->role,
 			'logged_in' => TRUE
 		);

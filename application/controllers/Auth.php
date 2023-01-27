@@ -39,6 +39,7 @@ class Auth extends MY_Controller {
 			redirect(site_url());
 		}
 		$username = escape($this->input->post("username"));		
+		$perusahaan = escape($this->input->post("perusahaan"));		
 		$password = md5(escape($this->input->post("password")));
 		$remember_me = escape($this->input->post("remember_me"));	
 		if($username && $password){
@@ -46,7 +47,7 @@ class Auth extends MY_Controller {
 		}
 		if($check_login){
 			$id = $check_login[0]->id;
-			$this->auth_model->set_session($id,$username,$role);
+			$this->auth_model->set_session($id,$username,$perusahaan,$role);
 			if($remember_me){
 				$this->auth_model->set_cookie_remember($username);
 			}
