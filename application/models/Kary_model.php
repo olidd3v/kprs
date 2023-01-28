@@ -47,6 +47,10 @@ class Kary_model extends CI_Model {
 	public function insert_transaction($data_transaction){
 		$this->db->insert('transaksi', $data_transaction);
 	}
+	public function update_transaction($nik,$data_transaction){
+		$this->db->where('nik', $nik);
+		$this->db->update('transaksi', $data_transaction);
+	}
 	public function update($id,$data){
 		$this->db->where('id_kary', $id);
 		$this->db->update('tbl_kary', $data);
@@ -54,6 +58,14 @@ class Kary_model extends CI_Model {
 	public function get_by_id($id){
 		$response = false;
 		$query = $this->db->get_where('tbl_kary',array('id_kary' => $id));
+		if($query && $query->num_rows()){
+			$response = $query->result_array();
+		}
+		return $response;
+	}
+	public function get_by_id_transaction($nik){
+		$response = false;
+		$query = $this->db->get_where('transaksi',array('nik' => $nik));
 		if($query && $query->num_rows()){
 			$response = $query->result_array();
 		}
@@ -70,6 +82,9 @@ class Kary_model extends CI_Model {
 	public function delete($id){
 		$this->db->delete('tbl_kary', array('id_kary' => $id));
 	}
+	public function delete_transaction($nik){
+		$this->db->delete('transaksi', array('nik' => $nik));
+	}
 	public function get_filter($filter = '',$limit_offset = array()){
 		if(!empty($filter)){
 			$query = $this->db->get_where("tbl_kary",$filter,$limit_offset['limit'],$limit_offset['offset']);
@@ -85,6 +100,15 @@ class Kary_model extends CI_Model {
 			$query = $this->db->get("tbl_kary");
 		}
 		return $query->num_rows();
+	}
+	public function get_by_id_upload($nik){
+		$response = false;
+		$this->db->join("tbl_kary", "tbl_kary.nik = transaksi.nik", "left");
+		$query = $this->db->get_where('transaksi',array('transaksi.nik' => $nik));
+		if($query && $query->num_rows()){
+			$response = $query->result_array();
+		}
+		return $response;
 	}
 	public function get_filter_history($filter = '',$limit_offset = array()){
 		$this->db->join("tbl_kary", "tbl_kary.nik = transaksi.nik", "left");

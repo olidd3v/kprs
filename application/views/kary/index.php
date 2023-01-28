@@ -76,9 +76,9 @@
                                     <td><?php echo $kary->alamat;?></td>
                                     <td><?php echo $kary->tgl_lhr;?></td>
                                     <td>
-                                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-default-<?php echo $kary->nik;?>">
-                                    Upload
-                                    </button>
+                                    <a
+                                        href="<?php echo site_url('kary/edit').'/'.$kary->id_kary;?>"
+                                        class="btn btn-sm btn-primary">Upload</a>
                                     <?php if ($_SESSION['role'] !== "2") {?>
                                         <a
                                             href="<?php echo site_url('kary/edit').'/'.$kary->id_kary;?>"
@@ -110,34 +110,4 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-<?php if(isset($karys) && is_array($karys)){ ?>
-<?php foreach($karys as $kary){?>
-<div class="modal fade in" id="modal-default-<?php echo $kary->nik; ?>" style="padding-right: 17px;">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header">
-<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-<span aria-hidden="true">×</span></button>
-<h4 class="modal-title"><?php echo $kary->nik; ?></h4>
-</div>
-<?php echo form_open_multipart('kary/save_transaction');?>
-<div class="modal-body">
-<div class="form-group">
-    <label class="col-sm-4" for="files">Upload File (.JPG)</label>
-    <div class="col-sm-8">
-        <input type="hidden" value="<?php echo $kary->nik; ?>" name="nik" class="form-control">
-        <input type="file" name="files" id="files" class="form-control">
-    </div>
-</div>
-</div>
-<div class="modal-footer">
-<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-<button type="submit" class="btn btn-primary">Save</button>
-</div>
-</form>
-</div>
-</div>
-</div>
-<?php } ?>
-<?php } ?>
 <?php $this->load->view('element/footer');?>

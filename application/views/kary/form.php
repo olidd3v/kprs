@@ -35,12 +35,17 @@
             <!-- /.box-header -->
             <!-- form start -->
             <?php if(!empty($kary)){?>
-            <form class="form-horizontal" method="POST" action="<?php echo site_url('kary/save').'/'.$kary['id_kary'];?>">
+            <form class="form-horizontal" action="<?php echo site_url('kary/save')."/".$kary['id_kary'];?>" enctype="multipart/form-data" method="post" accept-charset="utf-8">
             <?php }else{?>
-            <form class="form-horizontal" method="POST" action="<?php echo site_url('kary/save');?>">
+            <form class="form-horizontal" action="<?php echo site_url('kary/save');?>" enctype="multipart/form-data" method="post" accept-charset="utf-8">
             <?php } ?>
               <div class="box-body">
+                <?php if (uri_string() !== 'kary/create')  { ?>
                 <div class="col-md-6">
+                <?php }else{ ?>
+                <div class="col-md-12">
+                <?php } ?>
+                <div class="col-md-12">
                   <div class="form-group">
                     <label class="col-sm-4" for="name">NIK</label>
                     <div class="col-sm-8">
@@ -48,7 +53,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-12">
                   <div class="form-group">
                     <label class="col-sm-4" for="name">Nama kary</label>
                     <div class="col-sm-8">
@@ -56,7 +61,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-12">
                   <div class="form-group">
                     <label class="col-sm-4" for="name">Alamat</label>
                     <div class="col-sm-8">
@@ -64,7 +69,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-12">
                   <div class="form-group">
                     <label class="col-sm-4" for="name">Tgl. Lahir</label>
                     <div class="col-sm-8">
@@ -72,6 +77,37 @@
                     </div>
                   </div>
                 </div>
+                </div>
+                <?php if (uri_string() !== 'kary/create')  { ?>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-sm-4" for="gambar1">1st Upload Transaction</label>
+                    <div class="col-sm-8">
+                      <?php if (!empty($uploads[0]['gambar'])) { ?>
+                      <a href="<?php echo site_url('upload')."/".$uploads[0]['gambar']; ?>" target="_blank">
+                      <center><img src="<?php echo site_url('upload')."/".$uploads[0]['gambar']; ?>" class="img-responsive" style="height: 200px;"></center>
+                      </a>
+                      <br>
+                      <?php } ?>
+                      <input type="file" name="gambar1" id="gambar1" class="form-control"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="col-sm-4" for="gambar2">2nd Upload Transaction</label>
+                    <div class="col-sm-8">
+                      <?php if (!empty($uploads[0]['gambar1'])) { ?>
+                      <a href="<?php echo site_url('upload')."/".$uploads[0]['gambar1']; ?>" target="_blank">
+                      <center><img src="<?php echo site_url('upload')."/".$uploads[0]['gambar1']; ?>" class="img-responsive" style="height: 200px;"></center>
+                      </a>
+                      <br>
+                      <?php } ?>
+                      <input type="file" name="gambar2" id="gambar2" class="form-control"/>
+                    </div>
+                  </div>
+                </div>
+                <?php } ?>
                 </div>
               <!-- /.box-body -->
               <div class="box-footer">

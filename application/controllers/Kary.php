@@ -57,6 +57,8 @@ class Kary extends MY_Controller {
 		$check_id = $this->kary_model->get_by_id($id);
 		if($check_id){
             $data['kary'] = $check_id[0];
+			$nik = $check_id[0]['nik'];
+			$data['uploads'] = $this->kary_model->get_by_id_upload($nik);
 			$this->load->view('kary/form',$data);
 		}else{
 			redirect(site_url('kary'));
@@ -86,11 +88,61 @@ class Kary extends MY_Controller {
 			$check_id = $this->kary_model->get_by_id($id);
 			if($check_id){
 				unset($data['id']);
-                echo "atas";
 				$this->kary_model->update($id,$data);
+				$config['upload_path']          = './upload/';
+				$config['allowed_types']        = 'jpg';
+				$config['max_size']             = 5000;
+				// $config['max_width']            = 1024;
+				// $config['max_height']           = 768;
+				$config['encrypt_name'] = TRUE;
+			
+				$this->load->library('upload', $config);
+
+				$nik = $check_id[0]['nik'];
+				$upload = $this->kary_model->get_by_id_upload($nik);
+				if ($this->upload->do_upload('gambar1')){
+					if ( ! $this->upload->do_upload('gambar1')){
+						$error = array($this->upload->display_errors());
+						$this->session->set_flashdata('form_false', $error);
+					}else{
+						$data = array('upload_data' => $this->upload->data('file_name'));
+						$filename = $data['upload_data'];
+						$nik = $this->input->post('nik');
+						$data_transaction = array(
+							'nik' => $nik,
+							'gambar' => $filename 
+						);
+						$unlink = site_url('upload')."/".$upload[0]['gambar'];
+						unlink($unlink);
+						$this->kary_model->update_transaction($nik,$data_transaction);
+					}
+				}
+
+				if ($this->upload->do_upload('gambar2')){
+					if ( ! $this->upload->do_upload('gambar2')){
+						$error = array($this->upload->display_errors());
+						$this->session->set_flashdata('form_false', $error);
+					}else{
+						$data = array('upload_data' => $this->upload->data('file_name'));
+						$filename = $data['upload_data'];
+						$nik = $this->input->post('nik');
+						$data_transaction = array(
+							'nik' => $nik,
+							'gambar1' => $filename 
+						);
+						$unlink = site_url('upload')."/".$upload[0]['gambar1'];
+						unlink($unlink);
+						$this->kary_model->update_transaction($nik,$data_transaction);
+					}
+				}
 			}
 		}elseif($this->form_validation->run() != FALSE && empty($id)){
 			// INSERT NEW
+			$data_transaction = array(
+				'no_tr' => date("Yshh"),
+				'nik' => $nik
+			);
+			$this->kary_model->insert_transaction($data_transaction);
 			$this->kary_model->insert($data);
 		}else{
 			$this->session->set_flashdata('form_false', 'Harap periksa form anda.');
@@ -132,6 +184,15 @@ class Kary extends MY_Controller {
 		$check_id = $this->kary_model->get_by_id($id);
 		if($check_id){
 			$this->kary_model->delete($id);
+			$nik = $check_id[0]['nik'];
+			$check_nik = $this->kary_model->get_by_id_transaction($nik);
+			if ($check_nik){
+				$rm_1 = site_url('upload')."/".$check_nik[0]['gambar'];
+				$rm_2 = site_url('upload')."/".$check_nik[0]['gambar1'];
+				unlink($rm_1);
+				unlink($rm_2);
+				$this->kary_model->delete_transaction($nik);
+			}
 		}
 		redirect(site_url('kary'));
 	}
@@ -159,7 +220,7 @@ class Kary extends MY_Controller {
             if ($data->gambar){
 				$gambar = 'upload/'.$data->gambar;
 				// $pdf->Cell(40,10,$data->gambar,1,1);
-				$pdf->Cell(40,10, $pdf->Image($gambar, $pdf->GetX(), $pdf->GetY(), 11.5,10) ,1,1,'C');
+				$pdf->Cell(40,10, $pdf->Image($gambar, $pdf->GetX(), $pdf->GetY(), 11.5,10) ,1,1,'C',0);
 			}else{
 				$pdf->Cell(40,10,'',1,1);
 			}
