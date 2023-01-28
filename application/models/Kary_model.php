@@ -51,6 +51,10 @@ class Kary_model extends CI_Model {
 		$this->db->where('nik', $nik);
 		$this->db->update('transaksi', $data_transaction);
 	}
+	public function update_transaction_w($d,$data_transaction){
+		$this->db->where('nik', $d);
+		$this->db->update('transaksi', $data_transaction);
+	}
 	public function update($id,$data){
 		$this->db->where('id_kary', $id);
 		$this->db->update('tbl_kary', $data);

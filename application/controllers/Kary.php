@@ -100,8 +100,7 @@ class Kary extends MY_Controller {
 
 				$nik = $check_id[0]['nik'];
 				$upload = $this->kary_model->get_by_id_upload($nik);
-				if ($this->upload->do_upload('gambar1')){
-					if ( ! $this->upload->do_upload('gambar1')){
+				if (!$this->upload->do_upload('gambar1')){
 						$error = array($this->upload->display_errors());
 						$this->session->set_flashdata('form_false', $error);
 					}else{
@@ -112,14 +111,13 @@ class Kary extends MY_Controller {
 							'nik' => $nik,
 							'gambar' => $filename 
 						);
-						$unlink = site_url('upload')."/".$upload[0]['gambar'];
+						$unlink = '././upload/'.$upload[0]['gambar'];
 						unlink($unlink);
 						$this->kary_model->update_transaction($nik,$data_transaction);
 					}
-				}
+				
 
-				if ($this->upload->do_upload('gambar2')){
-					if ( ! $this->upload->do_upload('gambar2')){
+				if (!$this->upload->do_upload('gambar2')){
 						$error = array($this->upload->display_errors());
 						$this->session->set_flashdata('form_false', $error);
 					}else{
@@ -130,11 +128,10 @@ class Kary extends MY_Controller {
 							'nik' => $nik,
 							'gambar1' => $filename 
 						);
-						$unlink = site_url('upload')."/".$upload[0]['gambar1'];
+						$unlink = '././upload/'.$upload[0]['gambar1'];
 						unlink($unlink);
 						$this->kary_model->update_transaction($nik,$data_transaction);
 					}
-				}
 			}
 		}elseif($this->form_validation->run() != FALSE && empty($id)){
 			// INSERT NEW
@@ -183,16 +180,16 @@ class Kary extends MY_Controller {
 	public function delete($id){
 		$check_id = $this->kary_model->get_by_id($id);
 		if($check_id){
-			$this->kary_model->delete($id);
 			$nik = $check_id[0]['nik'];
 			$check_nik = $this->kary_model->get_by_id_transaction($nik);
 			if ($check_nik){
-				$rm_1 = site_url('upload')."/".$check_nik[0]['gambar'];
-				$rm_2 = site_url('upload')."/".$check_nik[0]['gambar1'];
-				unlink($rm_1);
-				unlink($rm_2);
+				$g = '././upload/'.$check_nik[0]['gambar'];
+				$f = '././upload/'.$check_nik[0]['gambar1'];
+				unlink($g);
+				unlink($f);
 				$this->kary_model->delete_transaction($nik);
 			}
+			$this->kary_model->delete($id);
 		}
 		redirect(site_url('kary'));
 	}
@@ -205,9 +202,10 @@ class Kary extends MY_Controller {
         $pdf->Cell(10,7,'',0,1);
         $pdf->SetFont('Arial','B',10);
         $pdf->Cell(10,10,'No',1,0,'C');
-        $pdf->Cell(90,10,'NIK',1,0,'C');
-        $pdf->Cell(120,10,'NAMA',1,0,'C');
-        $pdf->Cell(40,10,'GAMBAR',1,1,'C');
+        $pdf->Cell(85,10,'NIK',1,0,'C');
+        $pdf->Cell(85,10,'NAMA',1,0,'C');
+        $pdf->Cell(40,10,'GAMBAR 1',1,0,'C');
+        $pdf->Cell(40,10,'GAMBAR 2',1,1,'C');
         $pdf->SetFont('Arial','',10);		
 		// $pdf->setTopMargin(10,10);
 		$data = $this->kary_model->get_all_pdf(url_param());
@@ -215,15 +213,20 @@ class Kary extends MY_Controller {
         foreach ($data as $data){
             $no++;
             $pdf->Cell(10,10,$no,1,0, 'C');
-            $pdf->Cell(90,10,$data->nik,1,0);
-            $pdf->Cell(120,10,$data->nama_kary,1,0);
-            if ($data->gambar){
-				$gambar = 'upload/'.$data->gambar;
+            $pdf->Cell(85,10,$data->nik,1,0);
+            $pdf->Cell(85,10,$data->nama_kary,1,0);
+			$gambar = 'upload/'.$data->gambar;
+			$gambar1 = 'upload/'.$data->gambar1;
 				// $pdf->Cell(40,10,$data->gambar,1,1);
-				$pdf->Cell(40,10, $pdf->Image($gambar, $pdf->GetX(), $pdf->GetY(), 11.5,10) ,1,1,'C',0);
-			}else{
-				$pdf->Cell(40,10,'',1,1);
+			if (!empty($data->gambar)){
+				$pdf->Cell(40,10, $pdf->Image($gambar, $pdf->GetX(), $pdf->GetY(), 11.5,10) ,1,0,'C',0);
 			}
+			if (!empty($data->gambar1)){
+				$pdf->Cell(40,10, $pdf->Image($gambar1, $pdf->GetX(), $pdf->GetY(), 11.5,10) ,1,1,'C',0);
+			}else{
+				$pdf->Cell(40,10, '', 1,1,'C',0);
+			}
+			
 			// list($x1, $y1) = getimagesize($gambar);
 			// $x2 = 10;
 			// $y2 = 70;

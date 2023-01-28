@@ -69,8 +69,11 @@
                             <div class="col-md-4">
                                 <label>Gambar</label>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                             <img src="<?php echo site_url('upload')?>/<?php echo $kary->gambar; ?>" alt="<?php echo $kary->gambar; ?>" class="img-responsive" style="height: 300px; ">
+                            </div>
+                            <div class="col-md-4">
+                            <img src="<?php echo site_url('upload')?>/<?php echo $kary->gambar1; ?>" alt="<?php echo $kary->gambar1; ?>" class="img-responsive" style="height: 300px; ">
                             </div>
                         </div>
                         <?php } ?>
