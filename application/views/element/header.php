@@ -41,7 +41,7 @@
 
                 <p>
                   <?php echo $this->username;?>
-                  <small><?php if ($_SESSION['role'] == 0){ echo "Operator";} elseif ($_SESSION['role'] == 1){ echo "Admin";} ?></small>
+                  <small><?php if ($_SESSION['role'] == 2){ echo "User"." - ".$_SESSION['perusahaan'];} elseif ($_SESSION['role'] == 1){ echo "Admin"." - ".$_SESSION['perusahaan'];} ?></small>
                 </p>
               </li>
               <!-- Menu Body -->

@@ -8,7 +8,8 @@ class Kary extends MY_Controller {
 		$this->load->model('setting_model');
 		$this->load->model('user_model');
         $this->load->library('form_validation');
-		
+		$this->load->helper(array('form', 'url'));		
+		$this->load->library('Pdf');
 		// Check Session Login
 		if(!isset($_SESSION['logged_in'])){
 			redirect(site_url('auth/login'));
@@ -32,6 +33,18 @@ class Kary extends MY_Controller {
 		$data['paggination'] = get_paggination($total_row,get_search());
 
 		$this->load->view('kary/index',$data);
+	}
+
+	public function history(){
+		$data['judul_app'] = $this->setting_model->get_by_id(1);
+		if(isset($_GET['search'])){
+			$filter = array();
+            if(!empty($_GET['id']) && $_GET['id'] != ''){
+                $filter['transaksi.nik ='] = $_GET['id'];
+			}
+			$data['result_kary'] = $this->kary_model->get_filter_history($filter,url_param());
+		}
+		$this->load->view('kary/history',$data);
 	}
 	
 	public function create(){
@@ -85,12 +98,83 @@ class Kary extends MY_Controller {
 		}
 		redirect(site_url('kary'));
 	}
+	public function save_transaction(){
+		$config['upload_path']          = './upload/';
+		$config['allowed_types']        = 'jpg';
+		$config['max_size']             = 5000;
+		// $config['max_width']            = 1024;
+		// $config['max_height']           = 768;
+		$config['encrypt_name'] = TRUE;
+	 
+		$this->load->library('upload', $config);
+	 
+		if ( ! $this->upload->do_upload('files')){
+			$error = array($this->upload->display_errors());
+			// echo json_encode($error);
+            $this->session->set_flashdata('form_false', $error);
+			redirect(site_url('kary'));
+		}else{
+			$data = array('upload_data' => $this->upload->data('file_name'));
+			$filename = $data['upload_data'];
+			$nik = $this->input->post('nik');
+			$data_transaction = array(
+				'no_tr' => date("Yshh"),
+				// 'no_tr' => date("Y-shh")."-".md5(date("s")),
+				'nik' => $nik,
+				'gambar' => $filename 
+			);
+			$this->kary_model->insert_transaction($data_transaction);
+			// $this->load->view('kary', $data);
+			redirect(site_url('kary'));
+		}
+	}
 	public function delete($id){
 		$check_id = $this->kary_model->get_by_id($id);
 		if($check_id){
 			$this->kary_model->delete($id);
 		}
 		redirect(site_url('kary'));
+	}
+	public function report_pdf(){
+		error_reporting(0);
+        $pdf = new FPDF('L', 'mm','Letter');
+        $pdf->AddPage();
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(0,7,'REPORT',0,1,'C');
+        $pdf->Cell(10,7,'',0,1);
+        $pdf->SetFont('Arial','B',10);
+        $pdf->Cell(10,10,'No',1,0,'C');
+        $pdf->Cell(90,10,'NIK',1,0,'C');
+        $pdf->Cell(120,10,'NAMA',1,0,'C');
+        $pdf->Cell(40,10,'GAMBAR',1,1,'C');
+        $pdf->SetFont('Arial','',10);		
+		// $pdf->setTopMargin(10,10);
+		$data = $this->kary_model->get_all_pdf(url_param());
+        $no=0;
+        foreach ($data as $data){
+            $no++;
+            $pdf->Cell(10,10,$no,1,0, 'C');
+            $pdf->Cell(90,10,$data->nik,1,0);
+            $pdf->Cell(120,10,$data->nama_kary,1,0);
+            if ($data->gambar){
+				$gambar = 'upload/'.$data->gambar;
+				// $pdf->Cell(40,10,$data->gambar,1,1);
+				$pdf->Cell(40,10, $pdf->Image($gambar, $pdf->GetX(), $pdf->GetY(), 11.5,10) ,1,1,'C');
+			}else{
+				$pdf->Cell(40,10,'',1,1);
+			}
+			// list($x1, $y1) = getimagesize($gambar);
+			// $x2 = 10;
+			// $y2 = 70;
+			// if(($x1 / $x2) < ($y1 / $y2)) {
+			// 	$y2 = 0;
+			// } else {
+			// 	$x2 = 0;
+			// }
+			// $pdf->Cell(40, 6, $pdf->Image($gambar, 'R' ,40,40));
+			// $pdf->Cell(40, 6, "", 0, 1, 'C',$pdf->Image($gambar,$x2,$y2,0,40));
+        }
+        $pdf->Output();
 	}
 	public function export_csv(){
 		$filter = false;

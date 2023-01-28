@@ -8,8 +8,10 @@
 			    <li class="<?php echo is_menu('kary','create');?>"><a href="<?php echo site_url('kary/create');?>"><i class="fa fa-plus-square-o" aria-hidden="true"></i> <span>Add Kary</span></a></li>
           </ul>
           </li>
-        </li>
+        <?php if ($_SESSION['role'] !== "2") {?>
+        <li class="<?php echo is_menu('kary','report_pdf');?>"><a href="<?php echo site_url('kary/report_pdf');?>"><i class="fa fa-book" aria-hidden="true"></i> <span>Report</span></a></li>
         <li class="<?php echo is_menu('setting','edit/1');?>"><a href="<?php echo site_url('setting/edit/1');?>"><i class="fa fa-gear" aria-hidden="true"></i> <span>Setting</span></a></li>
+        <?php } ?>                    
       </ul>
       <br />
       <br />

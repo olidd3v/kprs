@@ -21,6 +21,7 @@
           <ul class="nav nav-tabs">
             <li role="presentation" class="active"><a href="<?php echo site_url('kary/create');?>">Input Kary</a></li>
             <li role="presentation"><a href="<?php echo site_url('kary');?>">List Kary</a></li>
+            <li role="presentation"><a href="<?php echo site_url('kary/history');?>">History</a></li>
           </ul>
 		  <div class="box box-info">
             <div class="box-header with-border">

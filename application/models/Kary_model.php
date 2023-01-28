@@ -14,6 +14,15 @@ class Kary_model extends CI_Model {
 		}
 		return $query->result();
 	}
+	public function get_all_pdf($limit_offset = array()){
+		$this->db->join("tbl_kary", "tbl_kary.nik = transaksi.nik", "left");
+		if(!empty($limit_offset)){
+			$query = $this->db->get("transaksi",$limit_offset['limit'],$limit_offset['offset']);
+		}else{
+			$query = $this->db->get("transaksi");
+		}
+		return $query->result();
+	}
 	public function count_total(){
 		$query = $this->db->get("tbl_kary");
 		return $query->num_rows();
@@ -34,6 +43,9 @@ class Kary_model extends CI_Model {
 	}
 	public function insert($data){
 		$this->db->insert('tbl_kary', $data);
+	}
+	public function insert_transaction($data_transaction){
+		$this->db->insert('transaksi', $data_transaction);
 	}
 	public function update($id,$data){
 		$this->db->where('id_kary', $id);
@@ -71,6 +83,23 @@ class Kary_model extends CI_Model {
 			$query = $this->db->get_where("tbl_kary",$filter);
 		}else{
 			$query = $this->db->get("tbl_kary");
+		}
+		return $query->num_rows();
+	}
+	public function get_filter_history($filter = '',$limit_offset = array()){
+		$this->db->join("tbl_kary", "tbl_kary.nik = transaksi.nik", "left");
+		if(!empty($filter)){
+			$query = $this->db->get_where("transaksi",$filter,$limit_offset['limit'],$limit_offset['offset']);
+		}else{
+			$query = $this->db->get("transaksi",$limit_offset['limit'],$limit_offset['offset']);
+		}
+		return $query->result();
+	}
+	public function count_total_filter_history($filter = array()){
+		if(!empty($filter)){
+			$query = $this->db->get_where("transaksi",$filter);
+		}else{
+			$query = $this->db->get("transaksi");
 		}
 		return $query->num_rows();
 	}
